@@ -13,11 +13,11 @@ int length;
 int bend_no;
 int len;
 char key;
-
 void Delay(long double);
 void Move();
 void gotoxy(int x, int y);
 void GotoXY(int x,int y);
+void Bend();
 void Boarder();
 void Down();
 void Left();
@@ -27,9 +27,9 @@ int Scoreonly();
 
 struct coordinate
 {
-	int x;
-	int y;
-	int direction;
+    int x;
+    int y;
+    int direction;
 };
 
 typedef  struct coordinate coordinate;
@@ -47,199 +47,262 @@ void HideCursor(){ // Скрыть функцию курсора
 void Move()
 {
 	HideCursor();
-	int a,i;
-	do
-	{
-		fflush(stdin);
-		len=0;
-		for(i=0; i<30; i++)
-		{
-			body[i].x=0;
-			body[i].y=0;
-			if(i==length)
-				break;
-		}
-		Delay(length);
-		Boarder();
-		if(head.direction==RIGHT)
-			Right();
-		else if(head.direction==LEFT)
-			Left();
-		else if(head.direction==DOWN)
-			Down();
-		else if(head.direction==UP)
-			Up();
-	}
-	while(!kbhit());
-	a=getch();
-	if(a==27)
-	{
-		system("cls");
-		exit(0);
-	}
-	key=getch();
-	if((key==RIGHT&&head.direction!=LEFT&&head.direction!=RIGHT)||
-	(key==LEFT&&head.direction!=RIGHT&&head.direction!=LEFT)||
-	(key==UP&&head.direction!=DOWN&&head.direction!=UP)||
-	(key==DOWN&&head.direction!=UP&&head.direction!=DOWN))
-	{
-		bend_no++;
-		bend[bend_no]=head;
-		head.direction=key;
-		if(key==UP)
-			head.y--;
-		if(key==DOWN)
-			head.y++;
-		if(key==RIGHT)
-			head.x++;
-		if(key==LEFT)
-			head.x--;
-		Move();
-	}
-	else if(key==27)
-	{
-		system("cls");
-		exit(0);
-	}
-	else
-	{
-		Move();
-	}
+    int a,i;
+    do
+    {
+        fflush(stdin);
+        len=0;
+        for(i=0; i<30; i++)
+        {
+            body[i].x=0;
+            body[i].y=0;
+            if(i==length)
+                break;
+        }
+        Delay(length);
+        Boarder();
+        if(head.direction==RIGHT)
+            Right();
+        else if(head.direction==LEFT)
+            Left();
+        else if(head.direction==DOWN)
+            Down();
+        else if(head.direction==UP)
+            Up();
+    }
+    while(!kbhit());
+    a=getch();
+    if(a==27)
+    {
+        system("cls");
+        exit(0);
+    }
+    key=getch();
+    if((key==RIGHT&&head.direction!=LEFT&&head.direction!=RIGHT)||
+    (key==LEFT&&head.direction!=RIGHT&&head.direction!=LEFT)||
+    (key==UP&&head.direction!=DOWN&&head.direction!=UP)||
+    (key==DOWN&&head.direction!=UP&&head.direction!=DOWN))
+    {
+        bend_no++;
+        bend[bend_no]=head;
+        head.direction=key;
+        if(key==UP)
+            head.y--;
+        if(key==DOWN)
+            head.y++;
+        if(key==RIGHT)
+            head.x++;
+        if(key==LEFT)
+            head.x--;
+        Move();
+    }
+    else if(key==27)
+    {
+        system("cls");
+        exit(0);
+    }
+    else
+    {
+        printf("\a");
+        Move();
+    }
 }
 
 void gotoxy(int x, int y)
 {
-	COORD coord;
-	coord.X = x;
-	coord.Y = y;
-	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
+    COORD coord;
+    coord.X = x;
+    coord.Y = y;
+    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
 }
 void GotoXY(int x, int y)
 {
-	HANDLE a;
-	COORD b;
-	fflush(stdout);
-	b.X = x;
-	b.Y = y;
-	a = GetStdHandle(STD_OUTPUT_HANDLE);
-	SetConsoleCursorPosition(a,b);
+    HANDLE a;
+    COORD b;
+    fflush(stdout);
+    b.X = x;
+    b.Y = y;
+    a = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleCursorPosition(a,b);
 }
 
 void Down()
 {
-	int i;
-	for(i=0; i<=(head.y-bend[bend_no].y)&&len<length; i++)
-	{
-		GotoXY(head.x,head.y-i);
-		{
-			if(len==0)
-				printf("v");
-			else
-				printf("*");
-		}
-		body[len].x=head.x;
-		body[len].y=head.y-i;
-		len++;
-	}
-	if(!kbhit())
-		head.y++;
+    int i;
+    for(i=0; i<=(head.y-bend[bend_no].y)&&len<length; i++)
+    {
+        GotoXY(head.x,head.y-i);
+        {
+            if(len==0)
+                printf("v");
+            else
+                printf("*");
+        }
+        body[len].x=head.x;
+        body[len].y=head.y-i;
+        len++;
+    }
+    Bend();
+    if(!kbhit())
+        head.y++;
 }
 
 void Delay(long double k)
 {
-	long double i;
-	for(i=0; i<=(80000000); i++);
+    long double i;
+    for(i=0; i<=(80000000); i++);
 }
 
 void Left()
 {
-	int i;
-	for(i=0; i<=(bend[bend_no].x-head.x)&&len<length; i++)
-	{
-		GotoXY((head.x+i),head.y);
-		{
-			if(len==0)
-				printf("<");
-			else
-				printf("*");
-		}
-		body[len].x=head.x+i;
-		body[len].y=head.y;
-		len++;
-	}
-	if(!kbhit())
-		head.x--;
+    int i;
+    for(i=0; i<=(bend[bend_no].x-head.x)&&len<length; i++)
+    {
+        GotoXY((head.x+i),head.y);
+        {
+            if(len==0)
+                printf("<");
+            else
+                printf("*");
+        }
+        body[len].x=head.x+i;
+        body[len].y=head.y;
+        len++;
+    }
+    Bend();
+    if(!kbhit())
+        head.x--;
 }
-
 void Right()
 {
-	int i;
-	for(i=0; i<=(head.x-bend[bend_no].x)&&len<length; i++)
-	{
-		body[len].x=head.x-i;
-		body[len].y=head.y;
-		GotoXY(body[len].x,body[len].y);
-		{
-			if(len==0)
-				printf(">");
-			else
-				printf("*");
-		}
-		len++;
-	}
-	if(!kbhit())
-		head.x++;
+    int i;
+    for(i=0; i<=(head.x-bend[bend_no].x)&&len<length; i++)
+    {
+        body[len].x=head.x-i;
+        body[len].y=head.y;
+        GotoXY(body[len].x,body[len].y);
+        {
+            if(len==0)
+                printf(">");
+            else
+                printf("*");
+        }
+        len++;
+    }
+    Bend();
+    if(!kbhit())
+        head.x++;
+}
+void Bend()
+{
+    int i,j,diff;
+    for(i=bend_no; i>=0&&len<length; i--)
+    {
+        if(bend[i].x==bend[i-1].x)
+        {
+            diff=bend[i].y-bend[i-1].y;
+            if(diff<0)
+                for(j=1; j<=(-diff); j++)
+                {
+                    body[len].x=bend[i].x;
+                    body[len].y=bend[i].y+j;
+                    GotoXY(body[len].x,body[len].y);
+                    printf("*");
+                    len++;
+                    if(len==length)
+                        break;
+                }
+            else if(diff>0)
+                for(j=1; j<=diff; j++)
+                {
+                    body[len].x=bend[i].x;
+                    body[len].y=bend[i].y-j;
+                    GotoXY(body[len].x,body[len].y);
+                    printf("*");
+                    len++;
+                    if(len==length)
+                        break;
+                }
+        }
+        else if(bend[i].y==bend[i-1].y)
+        {
+            diff=bend[i].x-bend[i-1].x;
+            if(diff<0)
+                for(j=1; j<=(-diff)&&len<length; j++)
+                {
+                    body[len].x=bend[i].x+j;
+                    body[len].y=bend[i].y;
+                    GotoXY(body[len].x,body[len].y);
+                    printf("*");
+                    len++;
+                    if(len==length)
+                        break;
+                }
+            else if(diff>0)
+                for(j=1; j<=diff&&len<length; j++)
+                {
+                    body[len].x=bend[i].x-j;
+                    body[len].y=bend[i].y;
+                    GotoXY(body[len].x,body[len].y);
+                    printf("*");
+                    len++;
+                    if(len==length)
+                        break;
+                }
+        }
+    }
 }
 
 void Boarder()
 {
-	system("cls");
-	int i;
-	for(i=10; i<71; i++)
-	{
-		GotoXY(i,10);
-		printf(" ");
-		GotoXY(i,30);
-		printf(" ");
-	}
-	for(i=10; i<31; i++)
-	{
-		GotoXY(10,i);
-		printf(" ");
-		GotoXY(70,i);
-		printf(" ");
-	}
+    system("cls");
+    int i;
+    for(i=10; i<71; i++)
+    {
+        GotoXY(i,10);
+        printf(" ");
+        GotoXY(i,30);
+        printf(" ");
+    }
+    for(i=10; i<31; i++)
+    {
+        GotoXY(10,i);
+        printf(" ");
+        GotoXY(70,i);
+        printf(" ");
+    }
 }
 
 void Up()
 {
-	int i;
-	for(i=0; i<=(bend[bend_no].y-head.y)&&len<length; i++)
-	{
-		GotoXY(head.x,head.y+i);
-		{
-			if(len==0)
-				printf("^");
-			else
-				printf("*");
-		}
-		body[len].x=head.x;
-		body[len].y=head.y+i;
-		len++;
-	}
-	if(!kbhit())
-		head.y--;
+    int i;
+    for(i=0; i<=(bend[bend_no].y-head.y)&&len<length; i++)
+    {
+        GotoXY(head.x,head.y+i);
+        {
+            if(len==0)
+                printf("^");
+            else
+                printf("*");
+        }
+        body[len].x=head.x;
+        body[len].y=head.y+i;
+        len++;
+    }
+    Bend();
+    if(!kbhit())
+        head.y--;
 }
 
 int main()
 {
-	system("cls");
-	length=5;
-	head.x=25;
-	head.y=20;
-	head.direction=RIGHT;
-	Boarder();
-	bend[0]=head;
-	Move();   
-	return 0;
+    system("cls");
+    length=5;
+    head.x=25;
+    head.y=20;
+    head.direction=RIGHT;
+    Boarder();
+    bend[0]=head;
+    Move();   //initialing initial bend coordinate
+    return 0;
 }
